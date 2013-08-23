@@ -11,4 +11,5 @@ Config files in a separate forlder for easy portability.
 	ln -s ~/.dotfiles/inputrc ~/.inputrc
 	ln -s ~/.dotfiles/vim/vimrc ~/.vimrc
 	cd ~/.dotfiles
-	git submodule update --init
+	git submodule update --init --recursive
+	git submodule update --recursive
