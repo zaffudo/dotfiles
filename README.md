@@ -1,6 +1,6 @@
 ##Bash Configuration Files
 
-Config files in a separate forlder for easy portability.
+Config files in a separate folder for easy portability.
 
 ### To Use
 
