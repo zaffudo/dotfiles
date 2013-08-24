@@ -1,3 +1,4 @@
 [submodule "vim"]
 	path = vim
 	url = https://github.com/zaffudo/dotvim.git
+	ignore = dirty
