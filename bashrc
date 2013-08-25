@@ -105,22 +105,36 @@ if [ "$PS1" ]; then
     # All the colors below can be changed to their bold counterparts by changing the '0;' to '1;' 
     # See: http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x329.html
 
-    function prompt {
-	local BLACK="\[\033[0;30m\]"
-	local RED="\[\033[0;31m\]"
-	local GREEN="\[\033[0;32m\]"
-	local YELLOW="\[\033[0;33m\]"
-	local BLUE="\[\033[0;34m\]"
-	local PURPLE="\[\033[0;35m\]"
-	local CYAN="\[\033[0;36m\]"
-	local GREY="\[\033[0;37m\]"
-	local DEFAULT="\[\033[0m\]"
+	# Function to grab the current git branch, if in a git repository - used in prompt below
+	function parse_git_branch {
+		command -v git > /dev/null && ref=$(git symbolic-ref HEAD 2> /dev/null) && echo "["${ref#refs/heads/}"]"
+	}
 
-	local HOSTCOLOR="$RED"
-	[ `echo $HOSTNAME | grep -i dev` ] && HOSTCOLOR="$GREEN"
-	[ `echo $HOSTNAME | grep -i qa` ] && HOSTCOLOR="$YELLOW"
+	# Designed to be called with an optional paramter, which overrides the HOSTCOLOR
+	# That way, in your bashrc_custom, you can declare a different color if the defaults
+	# below don't work for you
 
-	export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w]\n$ "
+	function prompt {
+		local BLACK="\[\033[0;30m\]"
+		local RED="\[\033[0;31m\]"
+		local GREEN="\[\033[0;32m\]"
+		local YELLOW="\[\033[0;33m\]"
+		local BLUE="\[\033[0;34m\]"
+		local PURPLE="\[\033[0;35m\]"
+		local CYAN="\[\033[0;36m\]"
+		local GREY="\[\033[0;37m\]"
+		local DEFAULT="\[\033[0m\]"
+
+		local HOSTCOLOR="$RED"
+		[ `echo $HOSTNAME | grep -i dev` ] && HOSTCOLOR="$GREEN"
+		[ `echo $HOSTNAME | grep -i qa` ] && HOSTCOLOR="$YELLOW"
+		[ `echo $HOSTNAME | grep -i stag` ] && HOSTCOLOR="$YELLOW"
+
+		if [ -n "$1" ]; then
+			HOSTCOLOR=$1
+		fi
+
+		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch)\n$ "
     }
     prompt
 
