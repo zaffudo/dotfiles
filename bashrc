@@ -134,7 +134,7 @@ if [ "$PS1" ]; then
 			HOSTCOLOR=$1
 		fi
 
-		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch)\n$ "
+		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch)$DEFAULT\n$ "
     }
     prompt
 
