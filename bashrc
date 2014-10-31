@@ -110,6 +110,11 @@ if [ "$PS1" ]; then
 	function parse_git_branch {
 		command -v git > /dev/null && ref=$(git symbolic-ref HEAD 2> /dev/null) && echo "["${ref#refs/heads/}"]"
 	}
+	
+	# Function to grab the current perforce branch, if in a perforce repo - used in prompt below
+	function parse_p4_branch {
+		command -v p4 > /dev/null && p4 where &> /dev/null && ref=$(p4 info | grep 'Client stream' | cut -d' ' -f 3 | cut -d'/' -f 4) && echo "["${ref}"]"
+	}
 
 	# Designed to be called with an optional paramter, which overrides the HOSTCOLOR
 	# That way, in your bashrc_custom, you can declare a different color if the defaults
@@ -135,7 +140,7 @@ if [ "$PS1" ]; then
 			HOSTCOLOR=$1
 		fi
 
-		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch)$DEFAULT\n$ "
+		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch) $YELLOW\$(parse_p4_branch)$DEFAULT\n$ "
     }
     prompt
 
