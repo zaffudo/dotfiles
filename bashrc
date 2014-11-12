@@ -108,12 +108,16 @@ if [ "$PS1" ]; then
 
 	# Function to grab the current git branch, if in a git repository - used in prompt below
 	function parse_git_branch {
-		command -v git > /dev/null && ref=$(git symbolic-ref HEAD 2> /dev/null) && echo "["${ref#refs/heads/}"]"
+		command -v git > /dev/null && ref=$(git symbolic-ref HEAD 2> /dev/null) && printf "%*s" 25 "["${ref#refs/heads/}"]"
 	}
 	
 	# Function to grab the current perforce branch, if in a perforce repo - used in prompt below
 	function parse_p4_branch {
-		command -v p4 > /dev/null && p4 where &> /dev/null && ref=$(p4 info | grep 'Client stream' | cut -d' ' -f 3 | cut -d'/' -f 4) && echo "["${ref}"]"
+		command -v p4 > /dev/null && p4 where &> /dev/null && ref=$(p4 info | grep 'Client stream' | cut -d' ' -f 3 | cut -d'/' -f 4) && printf "%*s" 25 "["${ref}"]"
+	}
+
+	function return_columns {
+		echo $(($COLUMNS+37))
 	}
 
 	# Designed to be called with an optional paramter, which overrides the HOSTCOLOR
@@ -132,17 +136,22 @@ if [ "$PS1" ]; then
 		local DEFAULT="\[\033[0m\]"
 
 		local HOSTCOLOR="$RED"
-		[ `echo $HOSTNAME | grep -i dev` ] && HOSTCOLOR="$GREEN"
-		[ `echo $HOSTNAME | grep -i qa` ] && HOSTCOLOR="$YELLOW"
-		[ `echo $HOSTNAME | grep -i stag` ] && HOSTCOLOR="$YELLOW"
+		[ `echo $HOSTNAME | grep -i -E 'pthomas|zaffudo|dev'` ] && HOSTCOLOR="$GREEN"
+		[ `echo $HOSTNAME | grep -i -E 'qa|stag'` ] && HOSTCOLOR="$YELLOW"
 
 		if [ -n "$1" ]; then
 			HOSTCOLOR=$1
 		fi
 
-		export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch) $YELLOW\$(parse_p4_branch)$DEFAULT\n$ "
+		local BRANCH=$(parse_git_branch)$(parse_p4_branch)
+		local BRANCHCOLOR="$GREY"
+		[ `echo $BRANCH | grep -i -E 'pthomas|zaffudo|dev'` ] && BRANCHCOLOR="$GREEN"
+		[ `echo $BRANCH | grep -i -E 'qa|stag'` ] && BRANCHCOLOR="$YELLOW"
+
+		# export PS1="\n[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w] $GREY\$(parse_git_branch)$YELLOW\$(parse_p4_branch)$DEFAULT\n$ "
+		export PS1=$(printf "\n%*s\r%s\n\$ " "$(($COLUMNS+25))" "$BRANCHCOLOR$BRANCH$DEFAULT" "[$CYAN\u$WHITE@$HOSTCOLOR\h$DEFAULT: \w]")
     }
-    prompt
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"prompt
 
     if [ "x$SHLVL" != "x1" ]; then # We're not a login shell
         for i in /etc/profile.d/*.sh; do
