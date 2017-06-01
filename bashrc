@@ -1,5 +1,5 @@
 # .bashrc file
-# Last Updated 07/13/13
+# Last Updated 05/25/17
 
 # -----------------------------------
 # -- 1.1) Set up umask permissions --
@@ -108,12 +108,15 @@ if [ "$PS1" ]; then
 
 	# Function to grab the current git branch, if in a git repository - used in prompt below
 	function parse_git_branch {
-		command -v git > /dev/null && ref=$(git symbolic-ref HEAD 2> /dev/null) && printf "%*s" 25 "["${ref#refs/heads/}"]"
+		command -v git > /dev/null && local ref && ref=$(git symbolic-ref HEAD 2> /dev/null) && printf "%*s" 25 "["${ref#refs/heads/}"]"
 	}
 	
 	# Function to grab the current perforce branch, if in a perforce repo - used in prompt below
 	function parse_p4_branch {
-		command -v p4 > /dev/null && p4 where &> /dev/null && ref=$(p4 info | grep 'Client stream' | cut -d' ' -f 3 | cut -d'/' -f 4) && printf "%*s" 25 "["${ref}"]"
+		ping -c 1 ${P4PORT//:1666/} > /dev/null 2>&1
+		if [ $? -eq 0 ]; then
+			command -v p4 > /dev/null && p4 where &> /dev/null && ref=$(p4 info | grep 'Client stream' | cut -d' ' -f 3 | cut -d'/' -f 4) && printf "%*s" 25 "["${ref}"]"
+		fi
 	}
 
 	function return_columns {
@@ -169,8 +172,8 @@ fi
 ## ------------------------------------------------
 
 # Append to history rather than clobbering it
-export HISTSIZE=2000
-export HISTFILESIZE=2000
+export HISTSIZE=4000
+export HISTFILESIZE=4000
 export HISTCONTROL=ignoredups
 export HISTIGNORE='jobs:fg:bg:exit:ll:du:df:cd:..:...'
 export HISTTIMEFORMAT='%b/%d/%y - %H:%M:%S '

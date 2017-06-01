@@ -1,5 +1,5 @@
 # .bash_profile file
-# Modified 07/14/13
+# Modified 05/25/17
 #
 # Concepts:
 # http://www.joshstaiger.org/archives/2005/07/bash_profile_vs.html
@@ -62,4 +62,8 @@ export PATH=$HOME/bin:$PATH
 export PATH=/usr/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/sbin:$PATH
-#export PATH=/usr/local/heroku/bin:$PATH # Heroku: https://toolbelt.heroku.com/standalone
+
+# Get the enhanced bash completion if available
+command -v brew > /dev/null && if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
