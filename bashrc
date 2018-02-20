@@ -100,7 +100,7 @@ if [ "$PS1" ]; then
     # have a fix for that which doesn't slow the command down, please submit
     # a patch or pull request.
 
-    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo -e $$\\t$USER\\t$HOSTNAME\\tscreen $WINDOW\\t`date +%D%t%T%t%Y%t%s`\\t$PWD"$(history 1)" >> ~/.bash_eternal_history; history -a; history -c; history -r;'
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo -e $$\\t$USER\\t$HOSTNAME\\tscreen $WINDOW\\t`date +%D%t%T%t%Y%t%s`\\t$PWD"$(history 1)" >> ~/.bash_eternal_history; history -a; history -c; history -r'
 
     # Update Prompt from default to something useful
     # All the colors below can be changed to their bold counterparts by changing the '0;' to '1;' 
